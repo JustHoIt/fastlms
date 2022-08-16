@@ -24,11 +24,12 @@ public class Member {
     private String userPhoneNumber;
     private LocalDateTime regDt;
 
-
-
     private boolean emailAuthYn;
     private LocalDateTime emailAuthDt;
     private String emailAuthKey;
+
+    private String resetPasswordKey;
+    private LocalDateTime resetPasswordLimitDt;
 
 
 

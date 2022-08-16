@@ -22,4 +22,9 @@ spring:
           starttls:
             enable: true
 
+logging:
+  level:
+    root: info
+
+
 
