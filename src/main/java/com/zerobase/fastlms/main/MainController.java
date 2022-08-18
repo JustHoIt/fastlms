@@ -24,6 +24,16 @@ import java.io.PrintWriter;
 @RequiredArgsConstructor
 @Controller
 public class MainController {
+    // 스프링 -> MVC(View -> 템플릿엔진 화면에 내용을 출력(html)
+    // .NET ->  MVC(View -> 출력)
+    // python django -> MTV(Template -> 화면출력)
+    // 백엔드 과정 -> V(화면에 보여진 부분) -> vmfhsxmdpsem rhkwjd
+    // V -> HTML ==>  웹페이지가
+    // V -> json ==> API
+
+    //request : WEB -> SERVER
+    //response : SERVER -> WEB
+
 
     private final MailComponents mailComponents;
 
@@ -38,16 +48,18 @@ public class MainController {
         return "index";
     }
 
+    @RequestMapping("/error/denied")
+    public String errorDenied(){
 
-    // 스프링 -> MVC(View -> 템플릿엔진 화면에 내용을 출력(html)
-    // .NET ->  MVC(View -> 출력)
-    // python django -> MTV(Template -> 화면출력)
-    // 백엔드 과정 -> V(화면에 보여진 부분) -> vmfhsxmdpsem rhkwjd
-    // V -> HTML ==>  웹페이지가
-    // V -> json ==> API
+//        String email = "phm3128@naver.com";
+//        String subjuect ="안녕하세요. 제로베이스 입니다.";
+//        String text = "<p>안녕하세요</p><p>반갑습니다.</p>";
+//        mailComponents.sendMail(email, subjuect, text);
+//
+        return "error/denied";
+    }
 
-   //request : WEB -> SERVER
-    //response : SERVER -> WEB
+
 
 
 

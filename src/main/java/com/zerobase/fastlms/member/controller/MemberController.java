@@ -21,6 +21,7 @@ public class MemberController {
     private final MemberService memberService;
 
 
+
     //회원가입
     @GetMapping("/member/register")
     public String register() {
@@ -108,11 +109,11 @@ public class MemberController {
     // password_reset 에서 form 태그 데이터 받아오기
     @PostMapping("/member/find/password_reset")
     public String resetPasswordSubmit(Model model, ResetPasswordInput parameter) {
-
+        System.out.println(parameter);
         boolean result = false;
         try {
             result = memberService.resetPassword(parameter.getId(),
-                    parameter.getUserPw());
+                    parameter.getPassword());
         } catch (Exception e) {
         }
 

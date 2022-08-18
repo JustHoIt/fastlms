@@ -35,6 +35,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
 
+
+        //비로그인시 이용가능한  도메인
         http.authorizeRequests()
                 .antMatchers("/"
                         , "/member/register"
@@ -45,18 +47,30 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                         , "/member/find/id"
                         , "/member/find/id_result")
                 .permitAll(); //권한허용
+
+        //어드민 계정에만 admin 도메인을 사용가능
+        http.authorizeRequests()
+                .antMatchers("/admin/**")
+                .hasAuthority("ROLE_ADMIN");
+
+
         http.formLogin()
                 .loginPage("/member/login")
                 .failureHandler(null)
                 .permitAll();
+
         http.logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                 .logoutSuccessUrl("/")
                 .invalidateHttpSession(true);
+
+        http.exceptionHandling()
+                .accessDeniedPage("/error/denied");
         super.configure(http);
 
 
     }
+
 
 
     @Override
@@ -65,7 +79,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordEncoder(getPasswordEncoder());
 
         super.configure(auth);
-
     }
 
 }
