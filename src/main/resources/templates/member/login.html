@@ -7,9 +7,9 @@
 <body>
 <h1>로그인 페이지입니다.</h1>
 <div th:replace="/fragments/layout.html :: fragment-user-menu"></div>
-
+<div th:text="${errorMessage}">
+</div>
 <form method="post">
-    <div th:text="${Error}"></div>
     <div>
         <input type="text" name="username" placeholder="아이디를 입력해주세요" required />
     </div>

@@ -3,6 +3,7 @@ package com.zerobase.fastlms.admin.controller;
 import com.zerobase.fastlms.admin.dto.MemberDto;
 import com.zerobase.fastlms.admin.model.MemberParam;
 import com.zerobase.fastlms.admin.model.AdminUserInput;
+import com.zerobase.fastlms.course.controller.BaseController;
 import com.zerobase.fastlms.member.service.MemberService;
 import com.zerobase.fastlms.util.PageUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-public class AdminMemberController {
+public class AdminMemberController extends BaseController {
     private final MemberService memberService; //멤버 리스트 불러오기
 
 
@@ -24,20 +25,18 @@ public class AdminMemberController {
     public String list(Model model, MemberParam parameter) {
 
         parameter.init();
-
         List<MemberDto> members = memberService.list(parameter);
-
 
         long totalCount = 0;
         if (members != null && members.size() > 0) {
             totalCount = members.get(0).getTotalCount();
         }
         String queryString = parameter.getQueryString();
+        String pagerHtml = getPagerHtml(totalCount, parameter.getPageSize(), parameter.getPageIndex(), queryString);
 
-        PageUtil pageUtil = new PageUtil(totalCount, parameter.getPageSize(), parameter.getPageIndex(), queryString);
         model.addAttribute("list", members);
         model.addAttribute("totalCount", totalCount);
-        model.addAttribute("pager", pageUtil.pager());
+        model.addAttribute("pager",pagerHtml);
 
         return "admin/member/list";
     }

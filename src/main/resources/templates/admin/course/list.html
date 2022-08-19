@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fastLms-관리자페이지(강의관리)</title>
+    <style>
+        .list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .list table th {
+            border: solid 1px #000;
+        }
+
+        .list table td {
+            border: solid 1px #000;
+        }
+
+        p.nothing {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .pager {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .pager a.on {
+            font-weight: bold;
+            color: red;
+        }
+    </style>
+</head>
+<div th:replace="/fragments/layout.html :: fragment-admin-menu"> </div>
+<h1>강좌 관리 페이지</h1>
+<div>
+    <p class="total-count">전체 <span th:text="${totalCount}"></span>개</p>
+    <a href="/admin/course/add.do">강좌 등록</a>
+</div>
+<body>
+<div class="list">
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <input id="selectAll" type="checkbox" />
+            </th>
+            <th>NO</th>
+            <th>강좌명</th>
+            <th>등록일</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="x : ${list}">
+            <td>
+                <input type="checkbox" th:value="${x.id}" />
+            </td>
+            <td th:text="${x.seq}"></td>
+            <td>
+                <p>
+                    <a th:href="'edit.do?id=' + ${x.id}" th:text="${x.subject}">강좌명</a>
+                </p>
+            </td>
+
+            <td th:text="${x.regDt}">강좌등록일일</td>
+           <td>
+
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+</table>
+<div class="pager" th:utext="${pager}">
+</div>
+
+</body>
+</html>
