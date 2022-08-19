@@ -30,6 +30,7 @@ public class MemberDto {
     long totalCount;
     long seq;
     String userStatus;
+    LocalDateTime userLoginLog;
 
     public static MemberDto of(Member member) {
         return MemberDto.builder()
@@ -46,6 +47,7 @@ public class MemberDto {
                 .resetPasswordLimitDt(member.getResetPasswordLimitDt())
                 .adminYn(member.isAdminYn())
                 .userStatus(member.getUserStatus())
+                .userLoginLog(member.getUserLoginLog()) //로그인 기록 마지막
                 .build();
 //
     }

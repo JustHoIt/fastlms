@@ -36,6 +36,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private PasswordUtil PasswordUtils;
 
+
+    //회원가입
     @Override
     public boolean register(MemberInput parameter) {
 
@@ -71,6 +73,8 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
+
+    //이메일인증
     @Override
     public boolean emailAuth(String uuid) {
 
@@ -118,7 +122,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-
+    //패스워드 재설정(유저)
     @Override
     public boolean resetPassword(String uuid, String password) {
         System.out.println("resetPassword 실행됨 "+ password);
@@ -170,6 +174,8 @@ public class MemberServiceImpl implements MemberService {
         return true;
     }
 
+
+    //회원리스트(어드민)
     @Override
     public List<MemberDto> list(MemberParam parameter) {
 
@@ -249,6 +255,8 @@ public class MemberServiceImpl implements MemberService {
         if(Member.MEMBER_STATUS_STOP.equals(member.getUserStatus())) {
             throw new MemberStopUserException("정지된 회원입니다. 사유는 고객센터로 문의해 주세요.");
         }
+        member.setUserLoginLog(LocalDateTime.now());
+        memberRepository.save(member);
 
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));

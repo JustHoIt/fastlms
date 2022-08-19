@@ -33,6 +33,7 @@ public class Member implements MemberCode  {
 
     private boolean adminYn;
     private String userStatus;
+    private LocalDateTime userLoginLog;
 
 
     //관리자 여부를 저장할 것인지.
