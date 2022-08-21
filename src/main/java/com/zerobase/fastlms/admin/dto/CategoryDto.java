@@ -21,6 +21,8 @@ public class CategoryDto {
     int sortValue;   //정렬값
     boolean usingYn; //사용가능여부
 
+    //ADD COLUMNS
+    int courseCount;
 
     public static List<CategoryDto> of(List<Category> categories) {
         if (categories != null) {

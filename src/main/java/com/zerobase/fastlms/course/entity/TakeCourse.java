@@ -14,27 +14,18 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 @Entity
-public class Course {
+public class TakeCourse implements TakeCourseCode {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    long categoryId;
+    long courseId;
+    String userId;
 
-    String imagePath;
-    String keyword;
-    String subject;
+    long payPrice; //결제금액
+    String status; // 상태(수강신청, 결재완료, 수강취소)
 
-    @Column(length = 1000)
-    String summary;
 
-    @Lob
-    String contents;
-    long price;
-    long salePrice;
-    LocalDate saleEndDt;
-
-    LocalDateTime regDt;//등록일
-    LocalDateTime udtDt;
-
+    LocalDateTime regDt;//신청일
 }

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>강좌 정보 페이지</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        $(function() {
+
+            $('#submitForm').on('submit', function() {
+
+                if (!confirm('수강 신청을 하시겠습니까?')) {
+                    return false;
+                }
+
+                var $thisForm = $(this);
+
+                var url = '/api/course/req.api';
+                var parameter = {
+                    courseId: $thisForm.find('input[name=id]').val()
+                };
+                axios.post(url, parameter).then(function(response) {
+                    console.log(response);
+                    console.log(response.data);
+
+                    response.data = response.data || {};
+                    response.data.header = response.data.header || {};
+
+                    if (!response.data.header.result) {
+                        alert(response.data.header.message);
+                        return false;
+                    }
+
+                    // 정상적이라면
+                    alert(' 강좌가 정상적으로 신청되었습니다. ');
+                    location.href = '/';
+
+
+                }).catch(function(err) {
+                    console.log(err);
+                });
+
+                return false;
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+<h1>강좌 상세 정보 페이지</h1>
+
+<div class="detail-table">
+    <table>
+        <tbody>
+        <tr>
+        <th><h2>강좌명</h2></th>
+        <td><h2 th:text="${detail.subject}"></h2></td>
+        </tr>
+        <tr>
+        <th><p>강의내용</p></th>
+        <td><p th:utext="${detail.contents}"></p></td>
+        </tr>
+        <tr>
+        <th><p>키워드</p></th>
+        <td><p th:text="${detail.keyword}"></p></td>
+        </tr>
+        <tr>
+        <th><p>정가</p></th>
+        <td><p th:text="${detail.price}"></p></td>
+        </tr>
+        <tr>
+        <th><p>할인가격</p></th>
+        <td><p th:text="${detail.price}"></p></td>
+        </tr>
+        <tr>
+        <th><p>할인 종료 일자</p></th>
+        <td><p th:text="${detail.saleEndDt}"></p></td>
+        </tr>
+        </tbody>
+    </table>
+    <div>
+        <form id="submitForm" method="post">
+            <input type="hidden" name="id" th:value="${detail.id}"/>
+            <button type="submit">수강신청</button>
+            <a href="/course">강좌목록</a>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

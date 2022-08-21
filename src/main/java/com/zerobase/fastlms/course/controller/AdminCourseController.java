@@ -79,10 +79,32 @@ public class AdminCourseController extends BaseController {
     }
 
     //강좌 추가
-    @PostMapping("/admin/course/add.do")
-    public String addSubmit(Model model, CourseInput parameter) {
+    @PostMapping(value = {"/admin/course/add.do","/admin/course/edit.do"})
+    public String addSubmit(Model model, HttpServletRequest request,
+                            CourseInput parameter) {
+        boolean editMode = request.getRequestURI().contains("/edit.do");
+        if (editMode) {
+            long id = parameter.getId();
+            CourseDto existCourse = courseService.getById(id);
+            if (existCourse == null) {
+                // error 처리
+                model.addAttribute("message", "강좌정보가 존재하지 않습니다.");
+                return "common/error";
+            }
+            boolean result = courseService.set(parameter);
+        } else {
+            boolean result = courseService.add(parameter);
 
-        boolean result = courseService.add(parameter);
+        }
+        return "redirect:/admin/course/list.do";
+    }
+
+
+    @PostMapping("/admin/course/delete.do")
+    public String del(Model model, HttpServletRequest request
+            , CourseInput parameter) {
+
+        boolean result = courseService.del(parameter.getIdList());
 
         return "redirect:/admin/course/list.do";
     }

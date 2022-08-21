@@ -6,8 +6,8 @@ import lombok.Data;
 
 //멤버리스트에서 검색 파라미터 받아오기
 @Data
-public class CourseParam extends CommonParam {
-    long id;//course.id
-    long categoryId;
+public class TakeCourseInput extends CommonParam {
+   long courseId;
+   String userId;
 
 }

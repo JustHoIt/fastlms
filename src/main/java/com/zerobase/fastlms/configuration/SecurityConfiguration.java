@@ -34,6 +34,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
 
         http.csrf().disable();
+        http.headers().frameOptions().sameOrigin();
 
 
         //비로그인시 이용가능한  도메인
