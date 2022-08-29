@@ -1,14 +1,19 @@
 package com.zerobase.fastlms.main;
 
+import com.zerobase.fastlms.admin.banner.dto.BannerDto;
+import com.zerobase.fastlms.admin.banner.service.BannerService;
 import com.zerobase.fastlms.compnets.MailComponents;
+import com.zerobase.fastlms.util.RequestUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 
 // MainPage 클래스를 만드는 목적 =>
@@ -36,25 +41,24 @@ public class MainController {
 
 
     private final MailComponents mailComponents;
+    private final BannerService bannerService;
+
+
 
     @RequestMapping("/")
-    public String index(){
+    String index(Model model) {
 
-//        String email = "phm3128@naver.com";
-//        String subjuect ="안녕하세요. 제로베이스 입니다.";
-//        String text = "<p>안녕하세요</p><p>반갑습니다.</p>";
-//        mailComponents.sendMail(email, subjuect, text);
-//
+        List<BannerDto> banner = bannerService.bannerList();
+        model.addAttribute("banner", banner);
+
         return "index";
     }
 
+
+
+
     @RequestMapping("/error/denied")
     public String errorDenied(){
-
-//        String email = "phm3128@naver.com";
-//        String subjuect ="안녕하세요. 제로베이스 입니다.";
-//        String text = "<p>안녕하세요</p><p>반갑습니다.</p>";
-//        mailComponents.sendMail(email, subjuect, text);
 //
         return "error/denied";
     }

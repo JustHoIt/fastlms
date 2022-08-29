@@ -1,12 +1,16 @@
-package com.zerobase.fastlms.admin.dto;
+package com.zerobase.fastlms.member.dto;
 
 import com.zerobase.fastlms.member.entity.Member;
+import com.zerobase.fastlms.member.entity.MemberLoginHistory;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -18,6 +22,7 @@ public class MemberDto {
     String userEmail;
     String userPhoneNumber;
     LocalDateTime regDt;
+    LocalDateTime udtDt;
 
     boolean emailAuthYn;
     LocalDateTime emailAuthDt;
@@ -32,6 +37,11 @@ public class MemberDto {
     String userStatus;
     LocalDateTime userLoginLog;
 
+    private String zipcode;
+    private String address;
+    private String addressDetail;
+    List<MemberLoginHistory> loginHistoryList;
+
     public static MemberDto of(Member member) {
         return MemberDto.builder()
                 .userId(member.getUserId())
@@ -40,6 +50,7 @@ public class MemberDto {
 //                .userPw(member.getUserPw())
                 .userPhoneNumber(member.getUserPhoneNumber())
                 .regDt(member.getRegDt())
+                .udtDt(member.getUdtDt())
                 .emailAuthKey(member.getEmailAuthKey())
                 .emailAuthYn(member.isEmailAuthYn())
                 .emailAuthDt(member.getEmailAuthDt())
@@ -48,7 +59,26 @@ public class MemberDto {
                 .adminYn(member.isAdminYn())
                 .userStatus(member.getUserStatus())
                 .userLoginLog(member.getUserLoginLog()) //로그인 기록 마지막
+                .zipcode(member.getZipcode())
+                .address(member.getAddress())
+                .addressDetail(member.getAddressDetail())
                 .build();
 //
     }
+
+
+    public String getRegDtText() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        return regDt != null ? regDt.format(formatter) : "";
+    }
+
+    public String getUdtDtText() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        return udtDt != null ? udtDt.format(formatter) : "";
+    }
+
+
+
 }

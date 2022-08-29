@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>fastlms- 회원정보페이지입니다.</title>
+</head>
+<body>
+<h1>회원정보(회원 탈퇴) 페이지입니다.</h1>
+<div th:replace="/fragments/layout.html :: fragment-user-menu"></div>
+<hr/>
+<div>
+    <a href="/member/info">회원 정보 수정</a>
+    |
+    <a href="/member/info-password-update">비밀번호 변경</a>
+    |
+    <a href="/member/info-takeCourse-list">내 수강 목록</a>
+    <hr/>
+</div>
+<div>
+    <p>회원 탈퇴를 하면
+        서비스를 더이상 이용하실 수 없습니다.
+        <br/>
+        회원탈퇴를 진행하시겠습니까?
+    </p>
+    <form id="submitForm" method="post">
+        <div>
+            <input type="password" name="userPw" placeholder="현재 비밀번호 입력" required/>
+        </div>
+
+        <div>
+            <button type="submit">회원탈퇴</button>
+            <a href="/member/info">돌아가기</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

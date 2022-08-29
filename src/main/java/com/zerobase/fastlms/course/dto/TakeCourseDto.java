@@ -1,10 +1,19 @@
 package com.zerobase.fastlms.course.dto;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.time.LocalDateTime;
+import com.zerobase.fastlms.course.entity.TakeCourse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class TakeCourseDto {
 
     private Long id;
@@ -18,10 +27,29 @@ public class TakeCourseDto {
     LocalDateTime regDt;//신청일
 
     String userName;
-    String phone;
+    String userPhoneNumber;
     String subject;
 
     long totalCount;
     long seq;
+
+    public static TakeCourseDto of(TakeCourse takeCourse) {
+
+        return TakeCourseDto.builder()
+                .id(takeCourse.getId())
+                .courseId(takeCourse.getCourseId())
+                .userId(takeCourse.getUserId())
+                .payPrice(takeCourse.getPayPrice())
+                .status(takeCourse.getStatus())
+                .regDt(takeCourse.getRegDt())
+                .build();
+    }
+
+
+    public String getRegDtText() {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm:ss");
+        return regDt != null ? regDt.format(formatter) : "";
+    }
 
 }

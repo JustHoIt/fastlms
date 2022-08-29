@@ -55,6 +55,16 @@
     <table>
         <tbody>
         <tr>
+            <th>
+                <h2>강좌 이미지
+                </h2>
+            </th>
+            <td>
+                <img th:src="${detail.urlFilename}" />
+            </td>
+        </tr>
+
+        <tr>
         <th><h2>강좌명</h2></th>
         <td><h2 th:text="${detail.subject}"></h2></td>
         </tr>

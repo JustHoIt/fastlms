@@ -44,7 +44,7 @@
 
     </select>
 
-    <select id="selectList" resultType="com.zerobase.fastlms.admin.dto.MemberDto">
+    <select id="selectList" resultType="com.zerobase.fastlms.member.dto.MemberDto">
         select *
         from member
         where 1 = 1

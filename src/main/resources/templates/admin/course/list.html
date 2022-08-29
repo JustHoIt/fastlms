@@ -9,8 +9,9 @@
             border-collapse: collapse;
             text-align: center;
         }
+
         .list table th, .list table td {
-            border:solid 1px #000;
+            border: solid 1px #000;
         }
 
         p.nothing {
@@ -23,7 +24,7 @@
             padding: 10px 0;
         }
 
-        .list  .buttons a,.list  .buttons button {
+        .list .buttons a, .list .buttons button {
             border-width: 0;
             background-color: transparent;
             text-decoration: underline;
@@ -44,29 +45,31 @@
             margin-top: 20px;
             text-align: center;
         }
+
         .pager a.on {
             font-weight: bold;
             color: red;
         }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
 
-            $('#selectAll').on('click', function() {
+            $('#selectAll').on('click', function () {
 
                 var checked = $(this).is(':checked');
 
 
-                $('#dataList input[type=checkbox]').each(function(k, v) {
+                $('#dataList input[type=checkbox]').each(function (k, v) {
                     $(this).prop('checked', checked);
                 });
 
 
             });
 
-            $('#deleteButton').on('click', function() {
+            $('#deleteButton').on('click', function () {
 
                 var $checked = $('#dataList input[type=checkbox]:checked');
                 if ($checked.length < 1) {
@@ -79,7 +82,7 @@
                 }
 
                 var idList = [];
-                $.each($checked, function(k, v) {
+                $.each($checked, function (k, v) {
                     idList.push($(this).val());
                 });
 
@@ -87,7 +90,7 @@
                 console.log(idList.join(','));
 
                 var $deleteForm = $('form[name=deleteForm]');
-                $deleteForm.find('input[name=idList]').val( idList.join(',') );
+                $deleteForm.find('input[name=idList]').val(idList.join(','));
                 $deleteForm.submit();
 
             });
@@ -97,8 +100,9 @@
     </script>
 </head>
 <body>
-<div th:replace="/fragments/layout.html :: fragment-admin-menu"></div>
+
 <h1>강좌 관리</h1>
+<div th:replace="/fragments/layout.html :: fragment-admin-menu"></div>
 
 
 <div class="list">
@@ -107,16 +111,16 @@
         <p class="total-count">전체 <span th:text="${totalCount}"></span>개</p>
 
         <a href="/admin/course/add.do"> 강좌 등록 </a>
-        <button id="deleteButton" type="button"> 선택 삭제 </button>
+        <button id="deleteButton" type="button"> 선택 삭제</button>
     </div>
 
     <table>
         <thead>
         <tr>
             <th>
-                <input id="selectAll" type="checkbox" />
+                <input id="selectAll" type="checkbox"/>
             </th>
-            <th> NO </th>
+            <th> NO</th>
             <th>
                 강좌명
             </th>
@@ -131,36 +135,32 @@
         </thead>
         <tbody id="dataList">
         <tr th:each="x : ${list}">
-            <td >
-                <input type="checkbox" th:value="${x.id}" />
+            <td>
+                <input type="checkbox" th:value="${x.id}"/>
             </td>
 
             <td th:text="${x.seq}"
                 th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
                 1
             </td>
-            <td  th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
+            <td th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
                 <p>
                     <a th:text="${x.subject}">강좌명</a>
                 </p>
             </td>
-            <td     th:text="${x.categoryId}"
-                    th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
+            <td th:text="${x.categoryId}"
+                th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
 
             </td>
-            <td  th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
+            <td th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
                 <p th:text="${x.regDt}">2021.01.01</p>
             </td>
         </tr>
         </tbody>
     </table>
 
-
     <div class="pager" th:utext="${pager}">
     </div>
-
-
-
 </div>
 
 <form name="deleteForm" method="post" action="/admin/course/delete.do">

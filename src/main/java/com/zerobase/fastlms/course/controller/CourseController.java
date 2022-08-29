@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class CourseController extends BaseController {
         model.addAttribute("categoryList",categoryList);
 
 
-        //카테고리 전체 개수 가저오는 영역역
+        //카테고리 전체 개수 가저오는 영역
         int courseTotalCount = 0;
         if(categoryList != null) {
             for(CategoryDto x : categoryList) {

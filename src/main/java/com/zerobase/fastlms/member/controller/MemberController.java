@@ -1,6 +1,10 @@
 package com.zerobase.fastlms.member.controller;
 
 
+import com.zerobase.fastlms.member.dto.MemberDto;
+import com.zerobase.fastlms.course.dto.TakeCourseDto;
+import com.zerobase.fastlms.course.model.ServiceResult;
+import com.zerobase.fastlms.course.service.TakeCourseService;
 import com.zerobase.fastlms.member.model.FindIdInput;
 import com.zerobase.fastlms.member.model.MemberInput;
 import com.zerobase.fastlms.member.model.ResetPasswordInput;
@@ -13,12 +17,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.security.Principal;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
 public class MemberController {
 
     private final MemberService memberService;
+    private final TakeCourseService takeCourseService;
+
 
 
 
@@ -61,10 +69,77 @@ public class MemberController {
 
     //회원정보
     @GetMapping("/member/info")
-    public String memberInfo() {
+    public String memberInfo(Model model, Principal principal) {
+
+
+        String userId = principal.getName();
+        MemberDto detail = memberService.detail(userId);
+
+        model.addAttribute("detail", detail);
 
         return "member/info";
     }
+
+    @PostMapping("/member/info")
+    public String memberSubmit(Model model, MemberInput parameter, Principal principal) {
+
+        String userId = principal.getName();
+        parameter.setUserId(userId);
+        ServiceResult result = memberService.updateMemberInfo(parameter);
+        if(!result.isResult()) {
+            model.addAttribute("message", result.getMessage());
+            return "common/error";
+        }
+
+        return "redirect:/member/info";
+    }
+
+    @GetMapping("/member/info-password-update")
+    public String memberPassword(Model model, Principal principal) {
+
+
+        String userId = principal.getName();
+        MemberDto detail = memberService.detail(userId);
+
+        model.addAttribute("detail",detail);
+
+        return "member/info-password-update";
+    }
+
+    @PostMapping("/member/info-password-update")
+    public String memberPasswordSubmit(Model model
+            , MemberInput parameter
+            , Principal principal) {
+
+        String userId = principal.getName();
+        parameter.setUserId(userId);
+
+        ServiceResult result = memberService.updateMemberPassword(parameter);
+        if (!result.isResult()) {
+            model.addAttribute("message", result.getMessage());
+            return "common/error";
+        }
+
+        return "redirect:/member/info";
+
+    }
+
+    @GetMapping("/member/info-takeCourse-list")
+    public String memberTakeCourse(Model model, Principal principal) {
+
+
+        String userId = principal.getName();
+        List<TakeCourseDto> list = takeCourseService.myCourse(userId);
+
+        model.addAttribute("list", list);
+
+
+
+        return "member/info-takeCourse-list";
+    }
+
+
+
 
     //로그인
     @RequestMapping("/member/login")
@@ -72,6 +147,8 @@ public class MemberController {
 
         return "member/login";
     }
+
+
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //비밀번호찾기
@@ -131,17 +208,28 @@ public class MemberController {
         return "member/find/id";
     }
 
-    public String findIdSubmit(Model model, FindIdInput parameter) {
-        boolean result = false;
-        try {
-            result = memberService.findId(parameter);
-        } catch (Exception e) {
 
+
+    //회원탈퇴 페이지
+    @GetMapping("/member/withdraw")
+    public String memberWithdraw(Model model) {
+
+
+        return "member/withdraw";
+    }
+
+    @PostMapping("/member/withdraw")
+    public String memberWithdrawSubmit(Model model, MemberInput parameter, Principal principal) {
+
+        String userId = principal.getName();
+
+        ServiceResult result = memberService.withdraw(userId, parameter.getUserPw());
+        if(!result.isResult()) {
+            model.addAttribute("message", result.getMessage());
+            return "common/error";
         }
-        model.addAttribute("result", result);
 
-        return "member/find/id_result";
-
+        return "redirect:/member/logout";
     }
 
 

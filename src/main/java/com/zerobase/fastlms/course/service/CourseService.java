@@ -34,4 +34,8 @@ public interface CourseService {
 
     //수강신청 api받아오가
     ServiceResult req(TakeCourseInput parameter);
+
+
+    //전체강좌 목록록
+    List<CourseDto> listAll();
 }

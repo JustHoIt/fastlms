@@ -9,162 +9,142 @@
             border-collapse: collapse;
             text-align: center;
         }
+
         .list table th, .list table td {
-            border:solid 1px #000;
+            border: solid 1px #000;
         }
 
         p.nothing {
             text-align: center;
             padding: 100px;
         }
-
-        .list .buttons {
-            position: relative;
-            padding: 10px 0;
-        }
-
-        .list  .buttons a,.list  .buttons button {
-            border-width: 0;
-            background-color: transparent;
-            text-decoration: underline;
-            font-size: 14px;
-            line-height: 20px;
-            height: 20px;
-            color: #000;
-            cursor: pointer;
+        .list .row-buttons{
+            text-align: center;
         }
 
         .list .buttons .total-count {
-            position: absolute;
-            top: 0;
-            right: 0;
+            /*position: absolute;*/
+            /*top: 0;*/
+            /*right: 0;*/
+            text-align: right;
         }
 
         .pager {
             margin-top: 20px;
             text-align: center;
         }
+
         .pager a.on {
             font-weight: bold;
             color: red;
         }
     </style>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
 
-            $('#selectAll').on('click', function() {
-
-                var checked = $(this).is(':checked');
-
-
-                $('#dataList input[type=checkbox]').each(function(k, v) {
-                    $(this).prop('checked', checked);
-                });
-
-
+            $('#searchCourseId').on('change', function() {
+                var id = $(this).val();
+                location.href = '?searchCourseId=' + id;
             });
 
-            $('#deleteButton').on('click', function() {
 
-                var $checked = $('#dataList input[type=checkbox]:checked');
-                if ($checked.length < 1) {
-                    alert(' 삭제할 데이터를 선택해 주세요. ');
+            $('.row-buttons button').on('click', function() {
+
+
+                var status = $(this).val();
+                var id = $(this).closest('div').find('input[name=id]').val();
+
+
+                var msg = status == 'COMPLETE' ? '결제완료 처리 하시겠습니까?' : '수강취소 처리 하시겠습니까?';
+                if (!confirm(msg)) {
                     return false;
                 }
 
-                if (!confirm(' 선택한 데이터를 삭제하시겠습니까? ')) {
-                    return false;
-                }
 
-                var idList = [];
-                $.each($checked, function(k, v) {
-                    idList.push($(this).val());
-                });
-
-                console.log(idList);
-                console.log(idList.join(','));
-
-                var $deleteForm = $('form[name=deleteForm]');
-                $deleteForm.find('input[name=idList]').val( idList.join(',') );
-                $deleteForm.submit();
+                var $procForm = $('#procForm');
+                $procForm.find('input[name=id]').val(id);
+                $procForm.find('input[name=status]').val(status);
+                $procForm.submit();
 
             });
 
 
         });
     </script>
+
 </head>
 <body>
-<div th:replace="/fragments/layout.html :: fragment-admin-menu"></div>
 <h1>수강 관리</h1>
-
+<div th:replace="/fragments/layout.html :: fragment-admin-menu"></div>
+<br/>
 
 <div class="list">
 
     <div class="buttons">
+        <select id="searchCourseId">
+            <option value="">전체 강좌</option>
+            <option th:each="x : ${courseList}"
+                    th:selected="${#strings.equals(param.searchCourseId, x.id)}"
+                    th:value="${x.id}" th:text="${x.subject}">자바 프로그래밍</option>
+        </select>
         <p class="total-count">전체 <span th:text="${totalCount}"></span>개</p>
-
-        <a href="/admin/course/add.do"> 강좌 등록 </a>
-        <button id="deleteButton" type="button"> 선택 삭제 </button>
     </div>
 
     <table>
         <thead>
         <tr>
-            <th>
-                <input id="selectAll" type="checkbox" />
-            </th>
-            <th> NO </th>
-            <th>
-                강좌명
-            </th>
-            <th>
-                카테고리
-            </th>
-
-            <th>
-                등록일
-            </th>
+            <th> NO</th>
+            <th> 등록일</th>
+            <th>강좌명</th>
+            <th colspan="3">신청자 정보</th>
+            <th>상태</th>
+            <th>비고</th>
         </tr>
         </thead>
         <tbody id="dataList">
         <tr th:each="x : ${list}">
-            <td >
-                <input type="checkbox" th:value="${x.id}" />
-            </td>
 
-            <td th:text="${x.seq}"
-                th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
-                1
+            <td th:text="${x.seq}">No</td>  <!-- No  -->
+            <td th:text="${x.regDtText}"></td>  <!-- 등록일  -->
+            <td th:text="${x.subject}"></td> <!-- 강좌명  -->
+            <td th:text="${x.userName}"></td> <!-- 신청자정보:이름  -->
+            <td th:text="${x.userId}"></td> <!-- 신청자정보:아이디  -->
+            <td th:text="${x.userPhoneNumber}"></td>  <!-- 신청자정보:핸드폰번호  -->
+            <td>
+                <p th:if="${x.status eq 'REQ'}">수강신청</p>  <!-- 수강상태: 수강신청  -->
+                <p th:if="${x.status eq 'COMPLETE'}">결제완료</p> <!-- 수강상태: 결제완료  -->
+                <p th:if="${x.status eq 'CANCEL'}">취소</p> <!-- 수강상태: 수강취소  -->
             </td>
-            <td  th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
-                <p>
-                    <a th:text="${x.subject}">강좌명</a>
+            <td>
+                <p class="row-buttons" th:if="${x.status eq 'REQ'}">
+                    <input type="hidden" name="id" th:value="${x.id}"/>
+                    <button value="COMPLETE" type="button">결제완료</button>
+                    <button value="CANCEL" type="button">결재취소</button>
                 </p>
             </td>
-            <td     th:text="${x.categoryId}"
-                    th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
-
-            </td>
-            <td  th:onclick="'location.href=\'edit.do?id='+ @{${x.id}} + '\''">
-                <p th:text="${x.regDt}">2021.01.01</p>
+        </tr>
+        <tr th:if="${#lists.size(list) < 1}">
+            <td colspan="8" >
+                <p class="nothing">내용이 없습니다.</p>
             </td>
         </tr>
+
         </tbody>
     </table>
 
 
-    <div class="pager" th:utext="${pager}">
+    <div class="pager" th:if="${#lists.size(list) > 0}" th:utext="${pager}">
     </div>
-
 
 
 </div>
 
-<form name="deleteForm" method="post" action="/admin/course/delete.do">
-    <input type="hidden" name="idList"/>
+<form id="procForm" method="post" action="/admin/takecourse/status.do">
+    <input type="hidden" name="id"/>
+    <input type="hidden" name="status"/>
 </form>
 
 

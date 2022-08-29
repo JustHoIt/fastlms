@@ -5,7 +5,6 @@
 <mapper namespace="com.zerobase.fastlms.course.mapper.TakeCourseMapper">
 
     <sql id="selectListWhere">
-
         <if test="searchCourseId > 0">
             and c.id = #{searchCourseId}
         </if>
@@ -21,29 +20,29 @@
         <include refid="selectListWhere"/>
     </select>
 
+
     <select id="selectList" resultType="com.zerobase.fastlms.course.dto.TakeCourseDto">
         select tc.*
         , c.subject
         , m.user_name
-        , m.phone
+        , m.user_phone_number
         from take_course tc
         join course c on tc.course_id = c.id
         join member m on tc.user_id = m.user_id
         where 1 = 1
         <include refid="selectListWhere"/>
         order by reg_dt desc
-        limit #{pageStart}, #{pageEnd}
     </select>
 
-    <!-- userId에 해당하는 수강신청 정보 -->
+
+    <!--    userId에 해당하는 수강 목록록-->
     <select id="selectListMyCourse" resultType="com.zerobase.fastlms.course.dto.TakeCourseDto">
         select tc.*
              , c.subject
         from take_course tc
                  join course c on tc.course_id = c.id
         where tc.user_id = #{userId}
-        order by reg_dt desc
-
+        order by reg_dt
     </select>
 
 

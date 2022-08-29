@@ -2,9 +2,11 @@ package com.zerobase.fastlms.util;
 
 
 import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 
 //
-public class PasswordUtil {
+@Service
+public class PasswordUtils {
 
     public static boolean equals(String plaintext, String hashed) {
 

@@ -1,7 +1,5 @@
 package com.zerobase.fastlms.course.controller;
 
-import com.zerobase.fastlms.admin.dto.MemberDto;
-import com.zerobase.fastlms.admin.model.MemberParam;
 import com.zerobase.fastlms.admin.service.CategoryService;
 import com.zerobase.fastlms.course.dto.CourseDto;
 import com.zerobase.fastlms.course.model.CourseInput;
@@ -9,15 +7,25 @@ import com.zerobase.fastlms.course.model.CourseParam;
 import com.zerobase.fastlms.course.service.CourseService;
 import com.zerobase.fastlms.util.PageUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
+//파일 오류처리
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class AdminCourseController extends BaseController {
@@ -51,7 +59,7 @@ public class AdminCourseController extends BaseController {
     }
 
     //강촤 추가
-    @GetMapping(value = {"/admin/course/add.do","/admin/course/edit.do"})
+    @GetMapping(value = {"/admin/course/add.do", "/admin/course/edit.do"})
     public String add(Model model, HttpServletRequest request, CourseInput parameter) {
 
 
@@ -78,11 +86,82 @@ public class AdminCourseController extends BaseController {
         return "admin/course/add";
     }
 
+
+    private String[] getNewSaveFile(String baseLocalPath, String baseUrlPath, String originalFilename) {
+
+        LocalDate now = LocalDate.now();
+
+
+        String[] dirs = {
+                String.format("%s/%d/", baseLocalPath, now.getYear()),
+                String.format("%s/%d/%02d/", baseLocalPath, now.getYear(), now.getMonthValue()),
+                String.format("%s/%d/%02d/%02d/", baseLocalPath, now.getYear(),
+                        now.getMonth().getValue(), now.getDayOfMonth())
+        };
+
+        String urlDir =  String.format("%s/%d/%02d/%02d/", baseUrlPath,
+                now.getYear(), now.getMonth().getValue(), now.getDayOfMonth());
+
+        for (String dir : dirs) {
+            File file = new File(dir);
+            if (!file.isDirectory()) {
+                file.mkdir();
+            }
+        }
+
+
+        String fileExtension = "";
+        if (originalFilename != null) {
+            int dotPos = originalFilename.lastIndexOf(".");
+            if (dotPos > -1) {
+                fileExtension = originalFilename.substring(dotPos + 1);
+            }
+        }
+        String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+        String newFilename = String.format("%s%s", dirs[2], uuid);
+        String newUrlFilename = String.format("%s%s", urlDir, uuid);
+        if (fileExtension.length() > 0) {
+            newFilename += "." + fileExtension;
+            newUrlFilename += "." + fileExtension;
+        }
+
+        return new String[]{newFilename, newUrlFilename};
+    }
+
     //강좌 추가
-    @PostMapping(value = {"/admin/course/add.do","/admin/course/edit.do"})
+    @PostMapping(value = {"/admin/course/add.do", "/admin/course/edit.do"})
     public String addSubmit(Model model, HttpServletRequest request,
-                            CourseInput parameter) {
+                            MultipartFile file, CourseInput parameter) {
+
+        String saveFilename = "";
+        String urlFilename = "";
+
+        if (file != null) {
+            String originalFilename = file.getOriginalFilename();
+//            String basePath = "D:\\dev\\Projec\\fastlms\\files\\";
+//            String baseLocalPath = "D:\\dev\\Projec\\fastlms\\files";
+            String baseLocalPath = "D:/dev/Projec/fastlms/files/";
+            String baseUrlPath = "/files";
+
+            String [] arrFilename = getNewSaveFile(baseLocalPath, baseUrlPath, originalFilename);
+
+            saveFilename = arrFilename[0];
+            urlFilename = arrFilename[1];
+
+
+            try {
+                File newFile = new File(saveFilename);
+                FileCopyUtils.copy(file.getInputStream(), new FileOutputStream(newFile));
+            } catch (IOException e) {
+                log.info("#######################");
+                log.info(e.getMessage());
+            }
+        }
+        parameter.setFilename(saveFilename);
+        parameter.setUrlFilename(urlFilename);
+
         boolean editMode = request.getRequestURI().contains("/edit.do");
+
         if (editMode) {
             long id = parameter.getId();
             CourseDto existCourse = courseService.getById(id);
@@ -108,9 +187,6 @@ public class AdminCourseController extends BaseController {
 
         return "redirect:/admin/course/list.do";
     }
-
-
-
 
 
 }

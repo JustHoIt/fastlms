@@ -1,11 +1,13 @@
 package com.zerobase.fastlms.configuration;
 
+
 import com.zerobase.fastlms.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +20,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final MemberService memberService;
+    private final UserAuthenticationSuccessHandler userAuthenticationSuccessHandler;
+
 
 
     @Bean
@@ -30,6 +34,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new UserAuthenticationFailureHandler();
     }
 
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/favicon.ico", "/files/**");
+
+        super.configure(web);
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -39,7 +51,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         //비로그인시 이용가능한  도메인
         http.authorizeRequests()
-                .antMatchers("/"
+                .antMatchers("/fa"
                         , "/member/register"
                         , "/member/email-auth"
                         , "/member/find/password"
@@ -57,7 +69,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         http.formLogin()
                 .loginPage("/member/login")
-                .failureHandler(null)
+                .successHandler(userAuthenticationSuccessHandler)
+                .failureHandler(getFailureHandler())
                 .permitAll();
 
         http.logout()
@@ -71,7 +84,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 
     }
-
 
 
     @Override
